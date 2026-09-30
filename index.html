@@ -3,47 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1A2E59">
+<meta name="theme-color" content="#191715">
 <title>Summit 35 Deck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap">
 <style>
-/* Layout: one screen. Header line, a stacked deck of cards in the middle, one wide rectangular button underneath. */
+/* Reinvention look: one dark, tactile world (folded black paper, torn color, halftone print).
+   Layout: one screen. Header line, a stacked deck in the middle, Shuffle + Flip underneath. */
 :root {
-  --bg: #EDF0F5;
-  --ink: #14203B;
-  --muted: #5B6781;
-  --paper: #FFFFFF;
-  --line: #D4DAE5;
-  --back: #1A2E59;
-  --back-2: #243F78;
-  --back-ink: #F4F6FB;
-  --challenge: #D9531F;
-  --hot: #CC2E66;
-  --edu: #0B8175;
-  --btn: #14203B;
-  --btn-ink: #FFFFFF;
-  --shadow: 0 1px 2px rgba(20,32,59,.10), 0 12px 28px rgba(20,32,59,.16);
-  --display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
-  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0B1322; --ink: #E7ECF5; --muted: #98A4BC; --paper: #172139; --line: #27324C;
-    --back: #20376A; --back-2: #2C4A8A; --back-ink: #F4F6FB;
-    --challenge: #FF7A4A; --hot: #FF5E95; --edu: #2EC3B2;
-    --btn: #E7ECF5; --btn-ink: #0B1322;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 30px rgba(0,0,0,.45);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0B1322; --ink: #E7ECF5; --muted: #98A4BC; --paper: #172139; --line: #27324C;
-  --back: #20376A; --back-2: #2C4A8A; --back-ink: #F4F6FB;
-  --challenge: #FF7A4A; --hot: #FF5E95; --edu: #2EC3B2;
-  --btn: #E7ECF5; --btn-ink: #0B1322;
-  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 30px rgba(0,0,0,.45);
+  --base: #191715;      /* near-black paper */
+  --base-2: #221F1C;
+  --paper: #ECE9E3;     /* printed card stock */
+  --ink: #191715;
+  --cream: #F2EFEA;
+  --muted: #A39D95;
+  --orange: #EE7C2D;
+  --red: #EF322D;
+  --maroon: #4B0000;
+  --navy: #00225A;
+  --cyan: #76CEE1;
+  --mint: #76E2CD;
+  --font: "Outfit", "Avenir Next", "Futura", system-ui, sans-serif;
+  --grain-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 0 0 0 -.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 1.2 0 0 0 -.58'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --grain-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .09 0 0 0 0 .08 .9 0 0 0 -.52'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
 html, body { height: 100%; }
@@ -51,10 +35,15 @@ html, body { height: 100%; }
 body { margin: 0; }
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--body);
+  background:
+    linear-gradient(90deg, transparent 49.6%, rgba(0,0,0,.35) 50%, rgba(255,255,255,.035) 50.4%, transparent 51.2%),
+    linear-gradient(180deg, transparent 57.6%, rgba(255,255,255,.03) 58%, rgba(0,0,0,.3) 58.4%, transparent 59.4%),
+    var(--grain-light),
+    var(--base);
+  color: var(--cream);
+  font-family: var(--font);
   font-size: 16px;
+  letter-spacing: -0.01em;
   overflow: hidden;
 }
 .app {
@@ -70,34 +59,35 @@ body {
 }
 header {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
 }
 .event {
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 17px;
-  letter-spacing: -0.01em;
-  line-height: 1.15;
+  font-weight: 900;
+  font-size: 22px;
+  line-height: .98;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
 }
 .event small {
   display: block;
-  font-family: var(--body);
   font-weight: 500;
   font-size: 12px;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-top: 3px;
+  line-height: 1.2;
+  color: var(--mint);
+  letter-spacing: 0.08em;
+  margin-top: 6px;
 }
 .count {
   font-size: 13px;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  padding-bottom: 1px;
 }
-.count b { color: var(--ink); font-weight: 700; }
+.count b { color: var(--cream); font-weight: 700; }
 
 .table {
   flex: 1;
@@ -110,18 +100,19 @@ header {
   height: min(100%, 520px);
   aspect-ratio: 5 / 7;
   max-width: calc(100% - 14px);
+  container-type: inline-size;
 }
 .card, .under {
   position: absolute;
   inset: 0;
-  border-radius: 18px;
+  border-radius: 6px;
 }
 .under {
-  background: var(--back);
-  box-shadow: var(--shadow);
+  background: var(--grain-light), var(--base-2);
+  box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 14px 30px rgba(0,0,0,.55);
 }
-.under.u1 { transform: translate(6px, 7px) rotate(2.2deg); background: var(--back-2); }
-.under.u2 { transform: translate(-5px, 5px) rotate(-2.6deg); }
+.under.u1 { transform: translate(6px, 7px) rotate(2.4deg); background: var(--grain-dark), var(--maroon); }
+.under.u2 { transform: translate(-5px, 5px) rotate(-2.8deg); background: var(--grain-dark), var(--navy); }
 .card {
   perspective: 1400px;
   transition: transform .45s cubic-bezier(.5,0,.75,0), opacity .45s;
@@ -137,161 +128,171 @@ header {
 .face {
   position: absolute;
   inset: 0;
-  border-radius: 18px;
+  border-radius: 6px;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: 0 16px 34px rgba(0,0,0,.6);
   overflow: hidden;
 }
 
-/* Card back */
+/* Card back: folded black stock with construction lines and a printed red 35 */
 .back {
   background:
-    repeating-linear-gradient(45deg, transparent 0 14px, rgba(255,255,255,.045) 14px 15px),
-    repeating-linear-gradient(-45deg, transparent 0 14px, rgba(255,255,255,.045) 14px 15px),
-    var(--back);
-  color: var(--back-ink);
+    linear-gradient(90deg, transparent 49.2%, rgba(0,0,0,.45) 50%, rgba(255,255,255,.06) 50.6%, transparent 52%),
+    linear-gradient(180deg, transparent 49.2%, rgba(255,255,255,.05) 50%, rgba(0,0,0,.4) 50.6%, transparent 52%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 350' preserveAspectRatio='none'%3E%3Cg fill='none' stroke-width='1'%3E%3Cpath d='M0 175 L125 50 L250 175 L125 300 Z' stroke='%23EF322D' stroke-opacity='.55'/%3E%3Cpath d='M0 175 H250' stroke='%23EF322D' stroke-opacity='.5'/%3E%3Cpath d='M125 0 V350' stroke='%2376E2CD' stroke-opacity='.45'/%3E%3Ccircle cx='125' cy='175' r='104' stroke='%23F2EFEA' stroke-opacity='.18'/%3E%3Ccircle cx='196' cy='175' r='15' stroke='%2376E2CD' stroke-width='2' stroke-opacity='.85'/%3E%3C/g%3E%3C/svg%3E") center / 100% 100% no-repeat,
+    var(--grain-light),
+    var(--base);
+  color: var(--cream);
   display: grid;
   place-items: center;
 }
-.back::before {
+.back::after {
   content: "";
   position: absolute;
-  inset: 12px;
-  border: 1.5px solid rgba(255,255,255,.28);
-  border-radius: 11px;
+  inset: 0;
+  background: var(--grain-dark);
+  opacity: .9;
+  pointer-events: none;
 }
 .back-mark { text-align: center; position: relative; }
 .back-35 {
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: clamp(96px, 34cqw, 150px);
-  line-height: .85;
-  letter-spacing: -0.05em;
-  color: transparent;
-  -webkit-text-stroke: 2px var(--back-ink);
+  font-weight: 900;
+  font-size: clamp(110px, 44cqw, 180px);
+  line-height: .8;
+  letter-spacing: -0.06em;
+  color: var(--red);
+  margin-left: -0.06em;
 }
-.deck { container-type: inline-size; }
 .back-label {
   margin-top: 14px;
   font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  font-weight: 700;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  opacity: .8;
+  color: var(--cream);
 }
-.back-cats {
-  display: flex; gap: 7px; justify-content: center; margin-top: 16px;
+.back-corner {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  z-index: 1;
 }
-.back-cats i { width: 9px; height: 9px; border-radius: 50%; display: block; }
-.back-cats i:nth-child(1) { background: var(--challenge); }
-.back-cats i:nth-child(2) { background: var(--hot); }
-.back-cats i:nth-child(3) { background: var(--edu); }
 
-/* Card front */
+/* Card front: printed stock with a torn strip of color */
 .front {
   transform: rotateY(180deg);
-  background: var(--paper);
+  background:
+    radial-gradient(circle at 1px 1px, rgba(25,23,21,.08) 1px, transparent 1.4px) 0 0 / 5px 5px,
+    var(--grain-soft),
+    var(--paper);
+  color: var(--ink);
   display: flex;
   flex-direction: column;
-  --cat: var(--challenge);
+  --cat: var(--red);
+  --cat-ink: #FFFFFF;
 }
-.front.hot { --cat: var(--hot); }
-.front.edu { --cat: var(--edu); }
+.front.hot { --cat: var(--orange); --cat-ink: var(--ink); }
+.front.edu { --cat: var(--cyan); --cat-ink: var(--ink); }
 .band {
-  background: var(--cat);
-  color: #FFFFFF;
-  padding: 16px 20px 14px;
+  background: var(--grain-soft), var(--cat);
+  color: var(--cat-ink);
+  padding: 18px 20px 30px;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 10px;
+  clip-path: polygon(0 0, 100% 0, 100% 80%, 97% 88%, 93% 82%, 89% 93%, 84% 85%, 79% 96%, 73% 86%, 68% 92%, 62% 83%, 56% 95%, 50% 87%, 45% 93%, 39% 84%, 33% 97%, 27% 87%, 21% 92%, 16% 83%, 10% 95%, 5% 86%, 0 92%);
 }
 .kind {
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: -0.01em;
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
 }
 .num {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   font-variant-numeric: tabular-nums;
-  opacity: .9;
 }
 .prompt {
   flex: 1;
   min-height: 0;
-  padding: 22px 22px 10px;
+  padding: 10px 22px;
   display: flex;
   align-items: center;
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(21px, 7.4cqw, 28px);
-  line-height: 1.22;
-  letter-spacing: -0.012em;
+  font-weight: 700;
+  font-size: clamp(22px, 7.6cqw, 29px);
+  line-height: 1.16;
+  letter-spacing: -0.015em;
   text-wrap: pretty;
   overflow-wrap: anywhere;
 }
-.prompt.long { font-size: clamp(18px, 6.2cqw, 24px); }
+.prompt.long { font-size: clamp(19px, 6.4cqw, 25px); }
 .hint {
-  padding: 0 22px 18px;
-  font-size: 13px;
-  color: var(--muted);
+  margin: 0 22px;
+  padding: 12px 0 16px;
+  border-top: 1.5px solid var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--maroon);
   display: flex;
   justify-content: space-between;
   gap: 10px;
+  white-space: nowrap;
 }
-.hint span:first-child { color: var(--cat); font-weight: 600; }
+.hint span:last-child { color: var(--navy); font-weight: 500; }
 
 /* Buttons */
 .controls { display: flex; gap: 10px; }
-.shuffle {
+.shuffle, .flip {
   appearance: none;
-  flex: 0 0 34%;
   min-height: 60px;
-  border-radius: 8px;
-  border: 2px solid var(--btn);
-  background: transparent;
-  color: var(--ink);
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 18px;
+  border-radius: 2px;
+  font-family: var(--font);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  transition: transform .12s ease;
+  transition: transform .12s ease, background-color .12s ease;
 }
-.shuffle:active { transform: scale(.97); }
-.shuffle:focus-visible { outline: 3px solid var(--challenge); outline-offset: 3px; }
+.shuffle {
+  flex: 0 0 34%;
+  border: 2px solid var(--cream);
+  background: transparent;
+  color: var(--cream);
+  font-size: 17px;
+}
+.flip {
+  flex: 1;
+  border: 0;
+  background: var(--grain-soft), var(--red);
+  color: #FFFFFF;
+  white-space: nowrap;
+  font-size: 20px;
+}
+.shuffle:active, .flip:active { transform: scale(.97); }
+.shuffle:focus-visible, .flip:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
 .deck.shuffling .under.u1 { animation: riffleR .55s ease-in-out 2; }
 .deck.shuffling .under.u2 { animation: riffleL .55s ease-in-out 2; }
 .deck.shuffling .card { animation: settle .55s ease-in-out 2; }
 @keyframes riffleR { 50% { transform: translate(38%, 2%) rotate(9deg); } }
 @keyframes riffleL { 50% { transform: translate(-38%, 3%) rotate(-10deg); } }
 @keyframes settle { 50% { transform: translateY(-4%) scale(.97); } }
-
-.flip {
-  flex: 1;
-  appearance: none;
-  border: 0;
-  width: 100%;
-  min-height: 60px;
-  border-radius: 8px;
-  background: var(--btn);
-  color: var(--btn-ink);
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform .12s ease;
-}
-.flip:active { transform: scale(.98); }
-.flip:focus-visible { outline: 3px solid var(--challenge); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) {
   .inner, .card { transition: none; }
@@ -566,13 +567,13 @@ function makeCard(card) {
   const cat = CATS[card.cat];
   el.innerHTML =
     '<div class="inner">' +
-      '<div class="face back"><div class="back-mark"><div class="back-35">35</div>' +
-        '<div class="back-label">Summit Deck</div><div class="back-cats"><i></i><i></i><i></i></div></div></div>' +
+      '<div class="face back"><div class="back-corner"><span>Oct 2–3</span><span>200 cards</span></div><div class="back-mark"><div class="back-35">35</div>' +
+        '<div class="back-label">Summit Deck</div></div></div>' +
       '<div class="face front ' + card.cat + '">' +
         '<div class="band"><span class="kind">' + cat.name + '</span><span class="num">' +
           String(card.n).padStart(3, "0") + ' / ' + card.of + '</span></div>' +
         '<div class="prompt' + (card.t.length > 110 ? " long" : "") + '">' + esc(card.t) + '</div>' +
-        '<div class="hint"><span>' + cat.hint + '</span><span>35th Anniversary Summit</span></div>' +
+        '<div class="hint"><span>' + cat.hint + '</span><span>35th Summit</span></div>' +
       '</div>' +
     '</div>';
   return el;
@@ -630,7 +631,7 @@ btn.addEventListener("click", () => {
   current = next;
   requestAnimationFrame(() => requestAnimationFrame(() => next.classList.add("flipped")));
   updateCount();
-  btn.textContent = "Flip another card";
+  btn.textContent = "Flip again";
   setTimeout(() => { busy = false; }, 450);
 });
 </script>
