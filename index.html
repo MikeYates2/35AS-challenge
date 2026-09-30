@@ -32,10 +32,11 @@
   --grain-faint: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 .5 0 0 0 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
-html, body { height: 100%; }
+html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 * { box-sizing: border-box; }
 body { margin: 0; }
 :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+@supports (height: 100dvh) { html { height: 100dvh; } }
 body {
   background:
     linear-gradient(90deg, transparent 49.6%, rgba(255,255,255,.02) 50.4%, transparent 51.2%),
@@ -159,6 +160,7 @@ header {
 .back-mark { text-align: center; position: relative; }
 .back-35 {
   font-weight: 900;
+  font-size: 130px;
   font-size: clamp(110px, 44cqw, 180px);
   line-height: .8;
   letter-spacing: -0.06em;
@@ -232,14 +234,17 @@ header {
   padding: 10px 22px;
   display: flex;
   align-items: center;
+  align-items: safe center;
+  overflow-y: auto;
   font-weight: 700;
+  font-size: 24px;
   font-size: clamp(22px, 7.6cqw, 29px);
   line-height: 1.16;
   letter-spacing: -0.015em;
   text-wrap: pretty;
   overflow-wrap: anywhere;
 }
-.prompt.long { font-size: clamp(19px, 6.4cqw, 25px); }
+.prompt.long { font-size: 21px; font-size: clamp(19px, 6.4cqw, 25px); }
 .hint {
   margin: 0 22px;
   padding: 12px 0 16px;
@@ -295,6 +300,32 @@ header {
 @keyframes riffleL { 50% { transform: translate(-38%, 3%) rotate(-10deg); } }
 @keyframes settle { 50% { transform: translateY(-4%) scale(.97); } }
 
+@media (orientation: landscape) and (max-height: 540px) {
+  .app {
+    max-width: 920px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(170px, 230px);
+    grid-template-rows: auto 1fr;
+    column-gap: 20px;
+  }
+  header { grid-column: 2; grid-row: 1; flex-direction: column; align-items: flex-start; }
+  .table { grid-column: 1; grid-row: 1 / 3; }
+  .controls { grid-column: 2; grid-row: 2; flex-direction: column-reverse; justify-content: flex-start; }
+  .shuffle { flex: 0 0 auto; }
+  .flip { flex: 0 0 auto; }
+  .deck { aspect-ratio: 3 / 2; height: auto; width: min(100%, 150dvh); max-height: 100%; }
+  .prompt { font-size: clamp(18px, 4.6cqw, 26px); padding-block: 4px; }
+  .prompt.long { font-size: clamp(16px, 4cqw, 22px); }
+  .band { padding: 12px 18px 22px; }
+  .hint { padding: 8px 0 10px; }
+  .back-35 { font-size: clamp(90px, 26cqw, 170px); }
+}
+@media (orientation: landscape) and (max-height: 340px) {
+  .prompt { font-size: clamp(15px, 4cqw, 20px); line-height: 1.12; }
+  .prompt.long { font-size: clamp(14px, 3.6cqw, 18px); }
+}
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
 @media (prefers-reduced-motion: reduce) {
   .inner, .card { transition: none; }
   .deck.shuffling .under, .deck.shuffling .card { animation: none; }
@@ -306,7 +337,7 @@ header {
 <div class="app">
   <header>
     <div class="event">35th Anniversary Summit<small>Oct 2–3 · Challenge Deck</small></div>
-    <div class="count" id="count" aria-live="polite"><b>200</b> cards left</div>
+    <div class="count" id="count" aria-live="polite"><b>200</b> of 200 left</div>
   </header>
 
   <main class="table">
@@ -315,6 +346,8 @@ header {
       <div class="under u1"></div>
     </div>
   </main>
+
+  <p class="sr-only" id="announce" aria-live="polite"></p>
 
   <div class="controls">
     <button class="shuffle" id="shuffle" type="button">Shuffle</button>
@@ -553,7 +586,8 @@ const deck = document.getElementById("deck");
 const btn = document.getElementById("flip");
 const count = document.getElementById("count");
 let current = null;
-let busy = false;
+let busy = false;       // a flip is animating
+let shuffling = false;  // the shuffle animation is running
 
 function esc(s) { return s.replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]); }
 
@@ -597,27 +631,28 @@ current = idle;
 updateCount();
 
 document.getElementById("shuffle").addEventListener("click", () => {
-  if (busy) return;
-  busy = true;
+  if (shuffling) return;
+  shuffling = true;
   drawn = [];
   save();
   const fresh = makeCard(CARDS[0]);
   fresh.querySelector(".front").style.visibility = "hidden";
-  if (current) current.remove();
+  deck.querySelectorAll(".card").forEach(el => el.remove());
   deck.appendChild(fresh);
   current = fresh;
   idle = fresh;
   updateCount();
   btn.textContent = "Flip a card";
+  document.getElementById("announce").textContent = "Deck shuffled. All " + CARDS.length + " cards are back.";
   deck.classList.remove("shuffling");
   void deck.offsetWidth;
   deck.classList.add("shuffling");
-  const done = () => { deck.classList.remove("shuffling"); busy = false; };
+  const done = () => { deck.classList.remove("shuffling"); shuffling = false; };
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) done(); else setTimeout(done, 1120);
 });
 
 btn.addEventListener("click", () => {
-  if (busy) return;
+  if (busy || shuffling) return;
   busy = true;
   const card = pick();
   const next = makeCard(card);
@@ -633,6 +668,7 @@ btn.addEventListener("click", () => {
   requestAnimationFrame(() => requestAnimationFrame(() => next.classList.add("flipped")));
   updateCount();
   btn.textContent = "Flip again";
+  document.getElementById("announce").textContent = CATS[card.cat].name + ": " + card.t;
   setTimeout(() => { busy = false; }, 450);
 });
 </script>
