@@ -127,6 +127,13 @@ header {
   transition: transform .7s cubic-bezier(.2,.8,.2,1);
 }
 .card.flipped .inner { transform: rotateY(180deg); }
+/* Mobile Safari can draw positioned children of a face mirrored through the other side,
+   so every layer hides its own back, and each face switches off at the midpoint of the flip. */
+.face, .face * { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.back { transition: visibility 0s .3s; }
+.card.flipped .back { visibility: hidden; }
+.front { visibility: hidden; transition: visibility 0s .3s; }
+.card.flipped .front { visibility: visible; }
 .face {
   position: absolute;
   inset: 0;
@@ -187,7 +194,6 @@ header {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
-  z-index: 1;
 }
 
 /* Card front: printed stock with a torn strip of color */
@@ -327,7 +333,7 @@ header {
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
-  .inner, .card { transition: none; }
+  .inner, .card, .back, .front { transition: none; }
   .deck.shuffling .under, .deck.shuffling .card { animation: none; }
 }
 </style>
