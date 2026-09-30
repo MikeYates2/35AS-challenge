@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1A2E59">
+<title>Summit 35 Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one screen. Header line, a stacked deck of cards in the middle, one wide rectangular button underneath. */
+:root {
+  --bg: #EDF0F5;
+  --ink: #14203B;
+  --muted: #5B6781;
+  --paper: #FFFFFF;
+  --line: #D4DAE5;
+  --back: #1A2E59;
+  --back-2: #243F78;
+  --back-ink: #F4F6FB;
+  --challenge: #D9531F;
+  --hot: #CC2E66;
+  --edu: #0B8175;
+  --btn: #14203B;
+  --btn-ink: #FFFFFF;
+  --shadow: 0 1px 2px rgba(20,32,59,.10), 0 12px 28px rgba(20,32,59,.16);
+  --display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B1322; --ink: #E7ECF5; --muted: #98A4BC; --paper: #172139; --line: #27324C;
+    --back: #20376A; --back-2: #2C4A8A; --back-ink: #F4F6FB;
+    --challenge: #FF7A4A; --hot: #FF5E95; --edu: #2EC3B2;
+    --btn: #E7ECF5; --btn-ink: #0B1322;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 30px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B1322; --ink: #E7ECF5; --muted: #98A4BC; --paper: #172139; --line: #27324C;
+  --back: #20376A; --back-2: #2C4A8A; --back-ink: #F4F6FB;
+  --challenge: #FF7A4A; --hot: #FF5E95; --edu: #2EC3B2;
+  --btn: #E7ECF5; --btn-ink: #0B1322;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 30px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  overflow: hidden;
+}
+.app {
+  box-sizing: border-box;
+  height: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.event {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+.event small {
+  display: block;
+  font-family: var(--body);
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+.count {
+  font-size: 13px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.count b { color: var(--ink); font-weight: 700; }
+
+.table {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+}
+.deck {
+  position: relative;
+  height: min(100%, 520px);
+  aspect-ratio: 5 / 7;
+  max-width: calc(100% - 14px);
+}
+.card, .under {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+}
+.under {
+  background: var(--back);
+  box-shadow: var(--shadow);
+}
+.under.u1 { transform: translate(6px, 7px) rotate(2.2deg); background: var(--back-2); }
+.under.u2 { transform: translate(-5px, 5px) rotate(-2.6deg); }
+.card {
+  perspective: 1400px;
+  transition: transform .45s cubic-bezier(.5,0,.75,0), opacity .45s;
+}
+.card.gone { transform: translate(-130%, -6%) rotate(-16deg); opacity: 0; }
+.inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform .7s cubic-bezier(.2,.8,.2,1);
+}
+.card.flipped .inner { transform: rotateY(180deg); }
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* Card back */
+.back {
+  background:
+    repeating-linear-gradient(45deg, transparent 0 14px, rgba(255,255,255,.045) 14px 15px),
+    repeating-linear-gradient(-45deg, transparent 0 14px, rgba(255,255,255,.045) 14px 15px),
+    var(--back);
+  color: var(--back-ink);
+  display: grid;
+  place-items: center;
+}
+.back::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1.5px solid rgba(255,255,255,.28);
+  border-radius: 11px;
+}
+.back-mark { text-align: center; position: relative; }
+.back-35 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(96px, 34cqw, 150px);
+  line-height: .85;
+  letter-spacing: -0.05em;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--back-ink);
+}
+.deck { container-type: inline-size; }
+.back-label {
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: .8;
+}
+.back-cats {
+  display: flex; gap: 7px; justify-content: center; margin-top: 16px;
+}
+.back-cats i { width: 9px; height: 9px; border-radius: 50%; display: block; }
+.back-cats i:nth-child(1) { background: var(--challenge); }
+.back-cats i:nth-child(2) { background: var(--hot); }
+.back-cats i:nth-child(3) { background: var(--edu); }
+
+/* Card front */
+.front {
+  transform: rotateY(180deg);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  --cat: var(--challenge);
+}
+.front.hot { --cat: var(--hot); }
+.front.edu { --cat: var(--edu); }
+.band {
+  background: var(--cat);
+  color: #FFFFFF;
+  padding: 16px 20px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.kind {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+.num {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  opacity: .9;
+}
+.prompt {
+  flex: 1;
+  min-height: 0;
+  padding: 22px 22px 10px;
+  display: flex;
+  align-items: center;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(21px, 7.4cqw, 28px);
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+}
+.prompt.long { font-size: clamp(18px, 6.2cqw, 24px); }
+.hint {
+  padding: 0 22px 18px;
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.hint span:first-child { color: var(--cat); font-weight: 600; }
+
+/* Buttons */
+.controls { display: flex; gap: 10px; }
+.shuffle {
+  appearance: none;
+  flex: 0 0 34%;
+  min-height: 60px;
+  border-radius: 8px;
+  border: 2px solid var(--btn);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 18px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .12s ease;
+}
+.shuffle:active { transform: scale(.97); }
+.shuffle:focus-visible { outline: 3px solid var(--challenge); outline-offset: 3px; }
+.deck.shuffling .under.u1 { animation: riffleR .55s ease-in-out 2; }
+.deck.shuffling .under.u2 { animation: riffleL .55s ease-in-out 2; }
+.deck.shuffling .card { animation: settle .55s ease-in-out 2; }
+@keyframes riffleR { 50% { transform: translate(38%, 2%) rotate(9deg); } }
+@keyframes riffleL { 50% { transform: translate(-38%, 3%) rotate(-10deg); } }
+@keyframes settle { 50% { transform: translateY(-4%) scale(.97); } }
+
+.flip {
+  flex: 1;
+  appearance: none;
+  border: 0;
+  width: 100%;
+  min-height: 60px;
+  border-radius: 8px;
+  background: var(--btn);
+  color: var(--btn-ink);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .12s ease;
+}
+.flip:active { transform: scale(.98); }
+.flip:focus-visible { outline: 3px solid var(--challenge); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .inner, .card { transition: none; }
+  .deck.shuffling .under, .deck.shuffling .card { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="event">35th Anniversary Summit<small>Oct 2–3 · Challenge Deck</small></div>
+    <div class="count" id="count" aria-live="polite"><b>200</b> cards left</div>
+  </header>
+
+  <main class="table">
+    <div class="deck" id="deck">
+      <div class="under u2"></div>
+      <div class="under u1"></div>
+    </div>
+  </main>
+
+  <div class="controls">
+    <button class="shuffle" id="shuffle" type="button">Shuffle</button>
+    <button class="flip" id="flip" type="button">Flip a card</button>
+  </div>
+</div>
+
+<script>
+const CHALLENGES = [
+  "Introduce yourself to 10 new people and take a selfie with each one. Come find the host and show all 10.",
+  "Find an open area and make a loud public announcement about how TFA shaped your leadership journey.",
+  "Find three people whose first corps years are in three different decades. Take a group photo.",
+  "Teach a stranger the attention-getter you used in your classroom, then run it on a group of five.",
+  "Find someone who shares your birth month and swap your best first-day-of-school stories.",
+  "Get five people to do a slow-motion group high five.",
+  "Give a genuine compliment to three people you have never met.",
+  "Find someone who taught the same subject as you. Write a 10-word motto for that subject together and say it out loud.",
+  "Start a round of applause for someone nearby. When it ends, tell everyone why they deserved it.",
+  "Find a summit staff member or volunteer and thank them by name.",
+  "Recruit people to form a human \"35\" and take a photo of it.",
+  "Learn how to say \"thank you\" in three languages from three different people.",
+  "Find someone whose first corps year matches yours exactly.",
+  "Get a stranger to teach you their signature dance move, then perform it together.",
+  "Invent a different custom handshake with each of five people.",
+  "Find someone who now works outside education and ask how the classroom still shows up in their work.",
+  "Give a stranger a 30-second pep talk as if it is the morning of state testing.",
+  "Find the person with the earliest corps year you can and ask what their summer training was like.",
+  "Get three people to sing the first line of any school fight song with you.",
+  "Find someone who has been a principal and ask for their best one-line piece of advice.",
+  "Play rock-paper-scissors with 10 people. Keep your record and report it back.",
+  "Find two people from your home state who have never met and introduce them.",
+  "Recreate a classic class photo with at least six people. Tall people in the back.",
+  "Ask someone about a student who changed them. Listen for two full minutes without interrupting.",
+  "Find someone wearing your favorite color and take a matching selfie.",
+  "Lead a group of at least five people in a 20-second stretch break.",
+  "Find someone who has lived in three or more TFA regions. Get their ranking of the best local food.",
+  "Tell a stranger about a teacher from your childhood who changed you. Then hear about theirs.",
+  "Get a stranger to tell you their favorite joke. Retell it to someone else within five minutes.",
+  "Find someone who knows the words to a song you pick and sing the chorus together.",
+  "Lead a call and response with at least eight people: \"When I say TFA, you say 35!\"",
+  "Find the person who traveled the farthest to be here. Take a selfie with them.",
+  "Swap contact info with someone who works in a completely different sector than you.",
+  "Gather three people, stack your hands, and break with a team name you invent on the spot.",
+  "Find someone who taught kindergarten and someone who taught 12th grade. Get them to shake hands.",
+  "Make a stranger laugh out loud in under one minute.",
+  "Ask five people for one word that describes their first year teaching. Report back all five words.",
+  "Find a first-time summit attendee and share one thing you know about the event that they don't.",
+  "Strike a superhero pose with three strangers and hold it for 10 seconds.",
+  "Find someone whose first name starts with the same letter as yours. Invent a team name together.",
+  "Ask a group for a show of hands: who would go back to their first classroom for one day?",
+  "Get someone to share the best advice a student ever gave them.",
+  "Find two people who grew up in the same city but have never met.",
+  "Say \"Clap once if you can hear me\" near a group and keep going until at least five people clap.",
+  "Find someone who speaks three or more languages and learn a greeting in one of them.",
+  "Form a group of three and create a 10-second commercial for public education. Perform it for someone.",
+  "Find someone who left the classroom and came back. Ask what brought them back.",
+  "Find someone who is teaching right now. Get two other people to join you in a standing ovation for them.",
+  "Find someone who has a sibling, parent, or partner who is also a TFA alum.",
+  "Describe your corps experience to someone new using exactly three words.",
+  "Tell a stranger what you would do with a free day in their home city. Let them correct you.",
+  "Get five people to line up by corps year without anyone saying a word.",
+  "Invent a secret handshake with someone you just met. Teach it to a third person.",
+  "Find someone who founded a school or organization. Ask about the hardest week they ever had.",
+  "Ask someone to teach you anything they are an expert in, in 60 seconds.",
+  "Ask three people for their favorite moment of the summit so far.",
+  "Hum a famous song and get a stranger to guess it in three tries or fewer.",
+  "Find someone with a hidden talent and get them to show it off.",
+  "Stand on one foot with a stranger while talking about your weekend. Whoever wobbles first loses.",
+  "Find someone with an October birthday and lead a group in singing them happy birthday.",
+  "Give a toast to TFA's next 35 years to a group of at least four people.",
+  "Find someone who was once a student in a TFA teacher's classroom.",
+  "Talk to someone for three minutes without mentioning work at all.",
+  "Find someone and list 10 things you both love as fast as you can.",
+  "Challenge someone to a staring contest. The winner has to explain their strategy.",
+  "Find someone who has taught outside the United States.",
+  "Ask five people where they're from, then arrange them west to east.",
+  "Tell someone the name of a student you still think about, and why.",
+  "Say \"Happy 35th!\" to 15 different people in under two minutes.",
+  "Get at least four people to do the stadium wave with you.",
+  "Find someone who has run a marathon and someone who has never run a mile. Introduce them.",
+  "Share a mistake you made as a first-year teacher with someone you just met.",
+  "Find someone who is an expert in a hobby that has nothing to do with education.",
+  "Freeze in a statue pose in a busy spot for 30 seconds or until someone asks what you're doing.",
+  "Ask three people to name the best teacher they ever had and what made that teacher great.",
+  "Find someone whose favorite childhood book is the same as yours.",
+  "Pitch your dream school to a stranger in 45 seconds. Ask them to add one thing to it.",
+  "Find the person with the most recent corps year you can. Give them one piece of advice.",
+  "Get someone to tell you a fact that genuinely surprises you. Share it with the next person you meet.",
+  "Do 10 jumping jacks with someone you just met, counting out loud in two languages.",
+  "Learn the names of everyone at a nearby table and say them all back correctly.",
+  "Find someone who can whistle a tune and get them to perform it.",
+  "Ask someone what they would want their former students to write on a sign for them.",
+  "Find someone wearing gear from their college and get them to do a 10-second college cheer.",
+  "Get three people to name their go-to karaoke song. Pick a winner.",
+  "Introduce two people to each other, including one thing you know they have in common.",
+  "Find someone with a pet. Learn the pet's name, age, and most dramatic habit.",
+  "Find someone who changed careers after the corps. Ask what they would tell their 22-year-old self.",
+  "Do a kind impression of your favorite former principal or mentor for a stranger.",
+  "Collect thumbs-up photos from five people who each taught in a different region.",
+  "Team up with a stranger and come up with a better name for Mondays.",
+  "Write a two-line poem about the summit with someone you just met. Read it out loud.",
+  "Get someone to describe their favorite place on earth in exactly 20 words.",
+  "Ask someone to rate their energy from 1 to 10. Do something together to raise it by two.",
+  "Find someone who has coached or mentored a new teacher and thank them for it.",
+  "Moonwalk, or attempt to, for five steps in a public area.",
+  "Organize a 30-second dance party with at least six people.",
+  "Find two people who have never done a challenge from this deck and recruit them to do one with you.",
+  "Find someone you met today and make a plan to talk again within 30 days. Shake on it.",
+  "Get a group of five to shout the year you joined the corps, all at once, on the count of three."
+];
+
+const HOT_TAKES = [
+  "What goes first: cereal or milk?",
+  "Is water wet?",
+  "Who is the worst musical artist of all time?",
+  "Is a hot dog a sandwich?",
+  "Pineapple on pizza: yes or absolutely not?",
+  "Toilet paper roll: over or under?",
+  "Is cereal a soup?",
+  "What is the most overrated food?",
+  "Which fast-food chain has the best fries?",
+  "GIF: hard G or soft G?",
+  "Ketchup: fridge or pantry?",
+  "Socks with sandals: acceptable or a crime?",
+  "What is the best day of the week?",
+  "What is the most overrated holiday?",
+  "Peanut butter: crunchy or creamy?",
+  "Would you rather fight one horse-sized duck or 100 duck-sized horses?",
+  "Is a Pop-Tart a ravioli?",
+  "Shower: morning or night?",
+  "What is the best condiment ever made?",
+  "What is the most overrated movie of all time?",
+  "What is the worst board game?",
+  "Is it OK to recline your seat on a plane?",
+  "What is the best candy bar?",
+  "Cake or pie?",
+  "What is the superior pasta shape?",
+  "Do you eat the pizza crust?",
+  "Beach or mountains?",
+  "What is the worst ice cream flavor?",
+  "Which snack food is secretly the best?",
+  "Is it OK to wear pajamas in public?",
+  "What is the worst song to hear at a wedding?",
+  "Taking the stairs or the elevator for two floors?",
+  "Do both armrests belong to the middle seat?",
+  "What was the best decade for music?",
+  "Does a straw have one hole or two?",
+  "What is the biggest lie adults tell kids?",
+  "What is the correct way to eat an Oreo?",
+  "Soda, pop, or coke?",
+  "Who is the best Muppet?",
+  "Should you wash jeans?",
+  "Which animal would be the rudest if it could talk?",
+  "What is the most overrated breakfast food?",
+  "Is a taco a sandwich?",
+  "Which fictional character would be the worst teacher?",
+  "Texting \"k\": rude or fine?",
+  "What is the most useless kitchen gadget?",
+  "Cats or dogs, and you have to defend it.",
+  "What is the best cookie?",
+  "Is it acceptable to clap when the plane lands?",
+  "Which chore is the absolute worst?"
+];
+
+const EDUCATION = [
+  "Should phones be banned in classrooms?",
+  "What is one thing AI should never do in a classroom?",
+  "If you could redesign the school day from scratch, when would it start and end?",
+  "What skill will matter most for students who graduate in 2040?",
+  "Should homework exist?",
+  "Letter grades: keep them, change them, or scrap them?",
+  "What is the best piece of edtech you have ever used, and why?",
+  "Which edtech tool was the biggest letdown?",
+  "Should every student learn to code?",
+  "How should schools teach students to use AI well?",
+  "What does student voice look like when it is real?",
+  "What one policy change would keep more great teachers in the classroom?",
+  "What would change if teachers were paid like doctors?",
+  "What is the most underrated part of a great lesson?",
+  "Should a four-year degree still be the default goal for every student?",
+  "What life skill should every student graduate with?",
+  "What does educational equity mean to you, in one sentence?",
+  "What could education learn from another sector?",
+  "Should standardized tests exist? If not, what replaces them?",
+  "Where will most learning happen 20 years from now?",
+  "What is the ideal class size?",
+  "What makes a school feel like a community?",
+  "How do we measure the things that matter but tests miss?",
+  "How much say should students have in what they learn?",
+  "What role should families play in school decisions?",
+  "What is one teaching strategy you swear by?",
+  "If every student had a free AI tutor, what should teachers spend their time on?",
+  "What is the biggest myth about teaching?",
+  "Should school be year-round?",
+  "What would it take to make teaching the most sought-after job in the country?",
+  "What should schools stop doing tomorrow?",
+  "What small change makes a big difference in a student's day?",
+  "How can schools better support student mental health?",
+  "Should financial literacy be a graduation requirement?",
+  "What is the best way for an adult to learn a new skill?",
+  "What did you learn outside school that school should have taught you?",
+  "Should every teacher have work experience outside education?",
+  "How can communities hold schools accountable without punishing them?",
+  "What does a classroom look like in 2061, when TFA turns 70?",
+  "Is screen time at school helping learning or hurting it?",
+  "What does every first-year teacher need to hear?",
+  "Should schools group students by ability?",
+  "What is one way to close the digital divide that would actually work?",
+  "Which matters more: what students learn, or learning how to learn?",
+  "How should schools teach civics in a divided country?",
+  "What would you do with an extra $1 million for one school?",
+  "What role should play have in learning, even for high schoolers?",
+  "Should students be allowed to use AI on essays? Under what rules?",
+  "What does a great school leader do that nobody sees?",
+  "What do you believe about education now that you did not believe on your first day in the classroom?"
+];
+
+const CATS = {
+  challenge: { name: "Micro Challenge", hint: "Go do it" },
+  hot:       { name: "Hot Take",        hint: "Answer fast" },
+  edu:       { name: "Education",       hint: "Discuss" }
+};
+
+const CARDS = [
+  ...CHALLENGES.map((t, i) => ({ id: "c" + i, cat: "challenge", n: i + 1, of: CHALLENGES.length, t })),
+  ...HOT_TAKES.map((t, i)  => ({ id: "h" + i, cat: "hot",       n: i + 1, of: HOT_TAKES.length,  t })),
+  ...EDUCATION.map((t, i)  => ({ id: "e" + i, cat: "edu",       n: i + 1, of: EDUCATION.length,  t }))
+];
+
+const KEY = "summit35-drawn";
+let drawn = [];
+try { drawn = JSON.parse(localStorage.getItem(KEY) || "[]").filter(id => CARDS.some(c => c.id === id)); } catch (e) { drawn = []; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(drawn)); } catch (e) {} };
+
+const deck = document.getElementById("deck");
+const btn = document.getElementById("flip");
+const count = document.getElementById("count");
+let current = null;
+let busy = false;
+
+function esc(s) { return s.replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]); }
+
+function updateCount() {
+  const left = CARDS.length - drawn.length;
+  count.innerHTML = "<b>" + left + "</b> of " + CARDS.length + " left";
+}
+
+function makeCard(card) {
+  const el = document.createElement("div");
+  el.className = "card";
+  const cat = CATS[card.cat];
+  el.innerHTML =
+    '<div class="inner">' +
+      '<div class="face back"><div class="back-mark"><div class="back-35">35</div>' +
+        '<div class="back-label">Summit Deck</div><div class="back-cats"><i></i><i></i><i></i></div></div></div>' +
+      '<div class="face front ' + card.cat + '">' +
+        '<div class="band"><span class="kind">' + cat.name + '</span><span class="num">' +
+          String(card.n).padStart(3, "0") + ' / ' + card.of + '</span></div>' +
+        '<div class="prompt' + (card.t.length > 110 ? " long" : "") + '">' + esc(card.t) + '</div>' +
+        '<div class="hint"><span>' + cat.hint + '</span><span>35th Anniversary Summit</span></div>' +
+      '</div>' +
+    '</div>';
+  return el;
+}
+
+function pick() {
+  let pool = CARDS.filter(c => !drawn.includes(c.id));
+  if (!pool.length) { drawn = []; pool = CARDS.slice(); }
+  const card = pool[Math.floor(Math.random() * pool.length)];
+  drawn.push(card.id);
+  save();
+  return card;
+}
+
+// Resting state: a face-down card on top of the pile.
+let idle = makeCard(CARDS[0]);
+idle.querySelector(".front").style.visibility = "hidden";
+deck.appendChild(idle);
+current = idle;
+updateCount();
+
+document.getElementById("shuffle").addEventListener("click", () => {
+  if (busy) return;
+  busy = true;
+  drawn = [];
+  save();
+  const fresh = makeCard(CARDS[0]);
+  fresh.querySelector(".front").style.visibility = "hidden";
+  if (current) current.remove();
+  deck.appendChild(fresh);
+  current = fresh;
+  idle = fresh;
+  updateCount();
+  btn.textContent = "Flip a card";
+  deck.classList.remove("shuffling");
+  void deck.offsetWidth;
+  deck.classList.add("shuffling");
+  const done = () => { deck.classList.remove("shuffling"); busy = false; };
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) done(); else setTimeout(done, 1120);
+});
+
+btn.addEventListener("click", () => {
+  if (busy) return;
+  busy = true;
+  const card = pick();
+  const next = makeCard(card);
+  const old = current;
+  if (old) deck.insertBefore(next, old); else deck.appendChild(next);
+  if (old && old !== idle) {
+    old.classList.add("gone");
+    setTimeout(() => old.remove(), 500);
+  } else if (old) {
+    old.remove();
+  }
+  current = next;
+  requestAnimationFrame(() => requestAnimationFrame(() => next.classList.add("flipped")));
+  updateCount();
+  btn.textContent = "Flip another card";
+  setTimeout(() => { busy = false; }, 450);
+});
+</script>
+</body>
+</html>
