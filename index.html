@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#070606">
+<meta name="description" content="Micro challenges, hot takes and education questions for the 35th Anniversary Summit.">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="35 Deck">
 <title>Summit 35 Deck</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -330,6 +338,83 @@ header {
   .prompt { font-size: clamp(15px, 4cqw, 20px); line-height: 1.12; }
   .prompt.long { font-size: clamp(14px, 3.6cqw, 18px); }
 }
+/* First-visit guide: add to home screen */
+.install {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(7,6,6,.72);
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.sheet {
+  width: 100%;
+  max-width: 440px;
+  max-height: 100%;
+  overflow-y: auto;
+  background: var(--grain-light), var(--base);
+  border-top: 6px solid var(--red);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(242,239,234,.12), 0 -10px 40px rgba(0,0,0,.6);
+  padding: 22px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.sheet h2 {
+  margin: 0;
+  font-weight: 900;
+  font-size: 26px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.sheet p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
+.steps { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: step; }
+.steps li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 12px;
+  align-items: start;
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 500;
+}
+.steps li::before {
+  content: counter(step);
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  border: 2px solid var(--mint);
+  border-radius: 50%;
+  color: var(--mint);
+  font-weight: 900;
+  font-size: 14px;
+}
+.steps b { font-weight: 900; }
+.glyph { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -0.2em; color: var(--cyan); }
+.sheet .note { font-size: 13px; }
+.sheet-actions { display: flex; gap: 10px; }
+.sheet-actions button {
+  flex: 1;
+  appearance: none;
+  min-height: 52px;
+  border-radius: 2px;
+  font-family: var(--font);
+  font-weight: 900;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.sheet-actions .primary { border: 0; background: var(--grain-soft), var(--red); color: #FFFFFF; }
+.sheet-actions .quiet { border: 2px solid var(--cream); background: transparent; color: var(--cream); }
+.sheet-actions button:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+[hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -358,6 +443,19 @@ header {
   <div class="controls">
     <button class="shuffle" id="shuffle" type="button">Shuffle</button>
     <button class="flip" id="flip" type="button">Flip a card</button>
+  </div>
+</div>
+
+<div class="install" id="install" role="dialog" aria-modal="true" aria-labelledby="install-title" hidden>
+  <div class="sheet">
+    <h2 id="install-title">Add the deck to your home screen</h2>
+    <p>It opens full screen like an app, and you can pull cards all summit long without hunting for the link.</p>
+    <ol class="steps" id="install-steps"></ol>
+    <p class="note" id="install-note"></p>
+    <div class="sheet-actions">
+      <button class="quiet" id="install-later" type="button">Not now</button>
+      <button class="primary" id="install-ok" type="button">Got it</button>
+    </div>
   </div>
 </div>
 
@@ -677,6 +775,84 @@ btn.addEventListener("click", () => {
   document.getElementById("announce").textContent = CATS[card.cat].name + ": " + card.t;
   setTimeout(() => { busy = false; }, 450);
 });
+// First visit: show how to add the deck to the home screen.
+(() => {
+  const SEEN = "summit35-install-seen";
+  const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  let seen = false;
+  try { seen = localStorage.getItem(SEEN) === "1"; } catch (e) {}
+  const ua = navigator.userAgent;
+  const ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  const android = /Android/.test(ua);
+  const inAppBrowser = /FBAN|FBAV|Instagram|LinkedInApp|GSA\//.test(ua);
+  const sheet = document.getElementById("install");
+  const steps = document.getElementById("install-steps");
+  const note = document.getElementById("install-note");
+  const ok = document.getElementById("install-ok");
+  const later = document.getElementById("install-later");
+  const share = '<svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg>';
+  const dots = '<svg class="glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>';
+  let deferred = null;
+
+  function close(remember) {
+    sheet.hidden = true;
+    if (remember) { try { localStorage.setItem(SEEN, "1"); } catch (e) {} }
+    btn.focus();
+  }
+
+  function render() {
+    if (ios) {
+      steps.innerHTML =
+        "<li><span>Tap the <b>Share</b> button " + share + " in the browser bar.</span></li>" +
+        "<li><span>Scroll down and tap <b>Add to Home Screen</b>.</span></li>" +
+        "<li><span>Tap <b>Add</b>. The 35 icon appears on your home screen.</span></li>";
+      note.textContent = inAppBrowser
+        ? "Opened this from another app? Open the link in Safari first, then follow these steps."
+        : "Works in Safari and Chrome. If you don't see Share, tap the browser bar at the bottom to bring it back.";
+    } else if (deferred) {
+      steps.innerHTML =
+        "<li><span>Tap <b>Install</b> below.</span></li>" +
+        "<li><span>Confirm with <b>Install</b> in the pop-up. The 35 icon appears on your home screen.</span></li>";
+      note.textContent = "";
+      ok.textContent = "Install";
+    } else {
+      steps.innerHTML =
+        "<li><span>Tap the menu " + dots + " in the top corner of the browser.</span></li>" +
+        "<li><span>Tap <b>Add to Home screen</b> or <b>Install app</b>.</span></li>" +
+        "<li><span>Tap <b>Install</b> or <b>Add</b>. The 35 icon appears on your home screen.</span></li>";
+      note.textContent = inAppBrowser ? "Opened this from another app? Open the link in Chrome first." : "";
+    }
+  }
+
+  window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    deferred = e;
+    if (!sheet.hidden) render();
+  });
+
+  ok.addEventListener("click", async () => {
+    if (deferred && !ios) {
+      deferred.prompt();
+      try { await deferred.userChoice; } catch (e) {}
+      deferred = null;
+    }
+    close(true);
+  });
+  later.addEventListener("click", () => close(true));
+  sheet.addEventListener("click", e => { if (e.target === sheet) close(true); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !sheet.hidden) close(true); });
+
+  if (!standalone && !seen && (ios || android)) {
+    render();
+    sheet.hidden = false;
+    ok.focus();
+  }
+
+  // Offline support on the hosted site (skipped inside previews and local files).
+  if ("serviceWorker" in navigator && location.protocol === "https:" && window.self === window.top && !/claude\.ai|claudeusercontent/.test(location.hostname)) {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }
+})();
 </script>
 </body>
 </html>
